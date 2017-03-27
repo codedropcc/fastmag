@@ -1,0 +1,31 @@
+services:
+    - mysql:latest
+
+variables:
+    MYSQL_ROOT_PASSWORD: myrootpassword
+    MYSQL_DATABASE: magento
+    MYSQL_USER: magento
+    MYSQL_PASSWORD: magento
+    COMPOSER_ALLOW_XDEBUG: 'true'
+    
+cache:
+    paths:
+        - vendor/
+
+before_script:
+  - composer self-update
+  - composer install
+  - vendor/bin/phinx -n migrate
+
+php5.6:
+    image: bobey/docker-gitlab-ci-runner-php5.6
+    script:
+    - echo "Running PHPUnit Tests"
+    - php vendor/bin/phpunit --bootstrap vendor/autoload.php tests --coverage-text --whitelist code --colors=never --debug
+
+
+php7:
+    image: bobey/docker-gitlab-ci-runner-php7
+    script:
+    - echo "Running PHPUnit Tests"
+    - php vendor/bin/phpunit --bootstrap vendor/autoload.php tests --coverage-text --whitelist code --colors=never --debug

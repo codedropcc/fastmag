@@ -1,0 +1,16 @@
+cli_5:
+  image: php:5-fpm
+  volumes:
+    - ./:/usr/src/myapp
+  links:
+    - mysql
+cli_7:
+  image: php:7-fpm
+  volumes:
+    - ./:/usr/src/myapp
+  links:
+    - mysql
+mysql:
+  image: mysql
+  env_file:
+    - env
