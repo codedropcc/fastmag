@@ -11,8 +11,10 @@ use Fastmag\AttributeHelper;
 class Image implements AttributeAbstract {
     protected $attributeHelper;
 
-    public function __construct() {
-        $this->attributeHelper = AttributeHelper::getInstance();
+    public function __construct(
+        AttributeHelper $attributeHelper
+    ) {
+        $this->attributeHelper = $attributeHelper;
     }
     
     public function save(ProductAbstract $product) {

@@ -8,6 +8,14 @@ use Fastmag\ArrayHelper;
 use Fastmag\AttributeHelper;
 
 class StockData implements AttributeAbstract {
+    protected $attributeHelper;
+
+    public function __construct(
+        AttributeHelper $attributeHelper
+    ) {
+        $this->attributeHelper = $attributeHelper;
+    }
+
     public function save(ProductAbstract $product) {
         if (ArrayHelper::is_multi($product->getData($this->getAttributeCode()))) {
             foreach ($stock_data as $key => $value) {
@@ -25,7 +33,7 @@ class StockData implements AttributeAbstract {
             }
             $table = 'cataloginventory_stock_item';
 
-            $fields = AttributeHelper::getInstance()->getColumns($table);
+            $fields = $this->attributeHelper->getColumns($table);
 
             $stock_data_fields = array_keys($data);
             $issetFields = ArrayHelper::filter(function ($field) use ($stock_data_fields) {

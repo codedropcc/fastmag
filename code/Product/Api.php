@@ -2,6 +2,7 @@
 
 namespace Fastmag\Product;
 
+use Fastmag;
 use Fastmag\AttributeHelper;
 use Fastmag\ArrayHelper;
 use Fastmag\Connection;
@@ -33,12 +34,12 @@ class Api {
     const LINK_TYPE_UPSELL = 4;
     const LINK_TYPE_CROSSSELL = 5;
 
-    /**
-     * @codeCoverageIgnore
-     */
-    public function __construct() {
-        $this->attributeHelper = AttributeHelper::getInstance();
-        $this->conn = Connection::getInstance();
+    public function __construct(
+        AttributeHelper $attributeHelper,
+        Connection $conn
+    ) {
+        $this->attributeHelper = $attributeHelper;
+        $this->conn = $conn;
         $this->prefix = $this->conn->getPrefix();
     }
 
@@ -54,7 +55,8 @@ class Api {
         if (!is_array($data) || empty($data))
             throw new Exception('Data should be set.');
 
-        $simple = new Simple;
+        $simple = Fastmag\Fastmag::getInstance()->getModel('Fastmag\Product\Simple');
+
         if (isset($data['entity_id']) && $data['entity_id']) {
             $simple->load($data['entity_id']);
         } else {

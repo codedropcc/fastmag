@@ -7,6 +7,9 @@ use Fastmag\ArrayHelper;
 use Fastmag\QB;
 use Fastmag\Product\ProductAbstract;
 
+/**
+ * @Injectable(scope="prototype")
+ */
 class Configurable extends ProductAbstract
 {
     protected function customOptionsSave() {

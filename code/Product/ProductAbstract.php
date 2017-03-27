@@ -10,7 +10,9 @@ use Fastmag\Exception;
 use Fastmag\Product\Attribute\Factory as AttributeFactory;
 
 use Fastmag\QB;
-
+/**
+ * @Injectable(scope="prototype")
+ */
 abstract class ProductAbstract
 {
     public $id;
@@ -35,11 +37,12 @@ abstract class ProductAbstract
     const RELATION_TYPE_WEBSITE = 1;
     const RELATION_TYPE_CATEGORY = 2;
 
-    public function __construct($id = NULL) {
-        if ($id !== NULL)
-            $this->load($id);
-        $this->attributeHelper = AttributeHelper::getInstance();
-        $this->conn = Connection::getInstance();
+    public function __construct(
+        AttributeHelper $attributeHelper,
+        Connection $conn
+    ) {
+        $this->attributeHelper = $attributeHelper;
+        $this->conn = $conn;
         $this->prefix = $this->conn->getPrefix();
         $this->attributes = [];
         foreach (['Website', 'Category', 'TierPrice', 'StockData', 'Image'] as $attribute) {

@@ -25,6 +25,8 @@ class ProductTest extends TestCase {
     protected static $api = null;
     /** @var Fastmag\AttributeHelper $helper */
     protected static $helper = null;
+    protected static $instance = null;
+    protected static $connection = null;
 
     protected $colors = [
         'white' => 3,
@@ -33,9 +35,10 @@ class ProductTest extends TestCase {
     
     public static function setUpBeforeClass() {
         /** @var Fastmag\Connection $connection */
-        $connection = Connection::getInstance('mysql', 'magento', 'magento', 'magento');
+        self::$instance = Fastmag\Fastmag::getInstance();
+        self::$connection = self::$instance->getModel('Fastmag\Connection');
         QB::query('SET foreign_key_checks = 0');
-        $prefix = $connection->getPrefix();
+        $prefix = self::$connection->getPrefix();
         $tables = [
             'catalog_product_entity',
             'catalog_product_entity_int',
@@ -76,8 +79,8 @@ class ProductTest extends TestCase {
         self::rmDir($simple->getBaseDir() . DIRECTORY_SEPARATOR . 'media');
         self::rmDir($simple->getBaseDir() . DIRECTORY_SEPARATOR . 'tmp');
         
-        self::$api = new Api();
-        self::$helper = AttributeHelper::getInstance();
+        self::$api = self::$instance->getModel('Fastmag\Product\Api');
+        self::$helper = self::$instance->getModel('Fastmag\AttributeHelper');
     }
 
     protected static function rmDir($path) {
@@ -330,7 +333,7 @@ class ProductTest extends TestCase {
             'url_key' => 'test-simple-internet-image',
             'sku' => 'test-simple-internet-image',
             'images' => [
-                'https://dl.dropboxusercontent.com/u/52598071/test_product_image.png' => ['image', 'small_image', 'thumbnail']
+                'https://www.dropbox.com/s/ao5mkzrnq93aik0/test_product_image.png?dl=0' => ['image', 'small_image', 'thumbnail']
             ],
             'tier_price' => [
                 '0.7500' => 2,
@@ -509,7 +512,7 @@ class ProductTest extends TestCase {
 
     public function testCreateSimpleForConfigurable() {
         /** @var AttributeHelper $attributeHelper */
-        $attributeHelper = AttributeHelper::getInstance();
+        $attributeHelper = Fastmag\Fastmag::getInstance()->getModel('Fastmag\AttributeHelper');
         $data = [
             'type_id' => 'simple',
             'website_ids' => [1],
@@ -562,7 +565,7 @@ class ProductTest extends TestCase {
     
     public function testCreateSecondSimpleForConfigurable() {
         /** @var AttributeHelper $attributeHelper */
-        $attributeHelper = AttributeHelper::getInstance();
+        $attributeHelper = Fastmag\Fastmag::getInstance()->getModel('Fastmag\AttributeHelper');
         $data = [
             'type_id' => 'simple',
             'website_ids' => [1],
@@ -620,7 +623,7 @@ class ProductTest extends TestCase {
      */
     public function testCreateConfigurableProduct(Simple $simple) {
         /** @var AttributeHelper $attributeHelper */
-        $attributeHelper = AttributeHelper::getInstance();
+        $attributeHelper = Fastmag\Fastmag::getInstance()->getModel('Fastmag\AttributeHelper');
         $configurableAttributes = [
             'color' => $attributeHelper->getAttributeIdByCode('color')
         ];
@@ -687,7 +690,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSecondSimpleForConfigurable
      */
     public function testResaveAttributesAndAddProduct(Configurable $config, Simple $simple) {
-        $attributeHelper = AttributeHelper::getInstance();
+        $attributeHelper = Fastmag\Fastmag::getInstance()->getModel('Fastmag\AttributeHelper');
         $attributeId = $attributeHelper->getAttributeIdByCode('color');
 
         $configData = [
@@ -911,22 +914,11 @@ class ProductTest extends TestCase {
     }
 
     /**
-     * @depends testCreateSimpleProduct
-     * @param Simple $simple
-     */
-    public function testGetSimpleProductById(Simple $simple) {
-        $product = new Simple($simple->getId());
-        
-        $this->assertEquals($product->getId(), $simple->getId());
-        $this->assertEquals($product->getSku(), $simple->getSku());
-    }
-
-    /**
      * @depends testCreateSimpleForConfigurable
      * @param Simple $simple
      */
     public function testGetSimpleProductByAttribute(Simple $simple) {
-        $product = new Simple;
+        $product = Fastmag\Fastmag::getInstance()->getModel('Fastmag\Product\Simple');
         $product->loadByAttribute('color', self::$helper->getAttributeOptionValue('color', 'black'));
 
         $this->assertEquals($product->getId(), $simple->getId());
@@ -939,7 +931,7 @@ class ProductTest extends TestCase {
      */
     public function testGetSimpleProductByAttributeNoProducts(Simple $simple) {
         $this->expectException(Exception::class);
-        $product = new Simple;
+        $product = Fastmag\Fastmag::getInstance()->getModel('Fastmag\Product\Simple');
         $product->loadByAttribute('color', self::$helper->getAttributeOptionValue('color', 'cyan'));
     }
 
@@ -1055,7 +1047,7 @@ class ProductTest extends TestCase {
      * @afterClass
      */
     public function testGetAllItems() {
-        $collection = new Collection;
+        $collection = self::$instance->getModel('Fastmag\Product\Collection');
         $this->assertEquals(count($collection->getItems()), 9);
     }
 
@@ -1063,7 +1055,7 @@ class ProductTest extends TestCase {
      * @afterClass
      */
     public function testGetAllSimplesProducts() {
-        $collection = new Collection;
+        $collection = self::$instance->getModel('Fastmag\Product\Collection');
         $collection->addFieldToFilter('type_id', 'simple');
         $this->assertEquals(count($collection->getItems()), 4);
         return $collection;
@@ -1072,24 +1064,8 @@ class ProductTest extends TestCase {
     /**
      * @afterClass
      */
-    public function testGetCollectionBasingOnAlreadyExistingProducts() {
-        $products = ArrayHelper::map(function ($item) {
-            return Factory::create($item->entity_id);
-        }, QB::table('catalog_product_entity')
-            ->select('entity_id')
-            ->where('type_id', 'simple')
-            ->get()
-        );
-
-        $collection = new Collection($products);
-        $this->assertEquals(count($collection->getItems()), 4);
-    }
-
-    /**
-     * @afterClass
-     */
     public function testGetCollectionDublicateFilter() {
-        $collection = new Collection;
+        $collection = self::$instance->getModel('Fastmag\Product\Collection');
         $collection->addFieldToFilter('type_id', 'simple');
         $this->assertEquals(count($collection->getItems()), 4);
         $collection->addFieldToFilter('type_id', 'bundle');
@@ -1100,7 +1076,7 @@ class ProductTest extends TestCase {
      * @afterClass
      */
     public function testGetAllItemsByAttribute() {
-        $collection = new Collection;
+        $collection = self::$instance->getModel('Fastmag\Product\Collection');
         $collection->addFieldToFilter('type_id', 'simple');
         $this->assertEquals(count($collection->getItems()), 4);
         $collection->addFieldToFilter('price', 1.0000);
@@ -1141,7 +1117,7 @@ class ProductTest extends TestCase {
         
         $this->assertEquals(count($collection->getItems()), 4);
         
-        $collection = new Collection;
+        $collection = self::$instance->getModel('Fastmag\Product\Collection');
         $collection->addFieldToFilter('type_id', 'simple');
         $collection->addFieldToFilter('status', 2);
         $this->assertEquals(count($collection->getItems()), 4);

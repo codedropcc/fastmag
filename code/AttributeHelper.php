@@ -20,22 +20,16 @@ class AttributeHelper {
     protected static $instance = null;
 
     // @codeCoverageIgnoreStart
-
-    protected function __construct() {
-        $this->conn = Connection::getInstance();
+    public function __construct(
+        Connection $conn
+    ) {
+        $this->conn = $conn;
     }
 
     private function __clone() {
     }
 
     private function __wakeup() {
-    }
-
-    public static function getInstance() {
-        if (static::$instance === null) {
-            static::$instance = new static();
-        }
-        return static::$instance;
     }
     // @codeCoverageIgnoreEnd
 

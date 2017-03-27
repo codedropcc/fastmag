@@ -8,11 +8,12 @@ use Fastmag\QB;
 class AttributeHelperTest extends TestCase {
     /** @var Fastmag\AttributeHelper $helper */
     protected static $helper = null;
+    protected static $instance = null;
 
     public static function setUpBeforeClass() {
         /** @var Fastmag\Connection $connection */
-        $connection = Connection::getInstance('mysql', 'magento', 'magento', 'magento');
-        self::$helper = AttributeHelper::getInstance();
+        self::$instance = Fastmag\Fastmag::getInstance();
+        self::$helper = self::$instance->getModel('Fastmag\AttributeHelper');
     }
 
     public function testGetAttributeDataForNonExistingAttribute() {

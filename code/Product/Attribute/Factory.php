@@ -2,12 +2,11 @@
 
 namespace Fastmag\Product\Attribute;
 
+use Fastmag;
+
 class Factory {
-    public function create($attribute) {
-        $className = 'Fastmag\\Product\\Attribute\\'.$attribute;
-        if (class_exists($className))
-            return new $className();
-        else
-            return NULL;
+    public static function create($attribute) {
+        $className = 'Fastmag\Product\Attribute\\'.$attribute;
+        return Fastmag\Fastmag::getInstance()->getModel($className);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Fastmag\Product;
 
+use Fastmag;
 use Fastmag\Exception;
 use Fastmag\Connection;
 use Fastmag\QB;
@@ -45,28 +46,19 @@ class Factory
         if ($typeId === null || $typeId === false) {
             throw new Exception('No have data for creation product');
         }
-        switch ($typeId) {
-            case 'simple' :
-                $product = new Simple();
-                break;
-            case 'bundle' :
-                $product = new Bundle();
-                break;
-            case 'configurable' :
-                $product = new Configurable();
-                break;
-            case 'grouped' :
-                $product = new Grouped();
-                break;
-            case 'virtual' :
-                $product = new Virtual();
-                break;
-            case 'downloadable' :
-                $product = new Downloadable();
-                break;
-            default:
-                throw new Exception("Unknown product type: {$typeId}.");
+        $possibleProducts = [
+            'simple',
+            'bundle',
+            'configurable',
+            'grouped',
+            'virtual',
+            'downloadable',
+        ];
+        if (!in_array($typeId, $possibleProducts)) {
+            throw new Exception("Unknown product type: {$typeId}.");
         }
+        $typeId = ucfirst($typeId);
+        $product = Fastmag\Fastmag::getInstance()->getModel('Fastmag\Product\\' . $typeId);
         if ($setData)
             $product->setData($data);
         else

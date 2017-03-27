@@ -9,6 +9,9 @@ use Fastmag\QB;
 use Fastmag\Product\ProductAbstract;
 use Fastmag\Product\Factory;
 
+/**
+ * @Injectable(scope="prototype")
+ */
 class Bundle extends ProductAbstract
 {
     const DEFAULT_BUNDLE_OPTION_VALUE_STORE_ID_ADMIN = 0;

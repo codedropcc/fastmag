@@ -4,6 +4,7 @@ namespace Fastmag;
 
 use Fastmag\Connection;
 use Fastmag\AttributeHelper;
+use Fastmag\Product\ProductAbstract;
 
 /**
  * @codeCoverageIgnore
@@ -13,8 +14,11 @@ class MediaGallery {
     protected $product;
     protected $data;
 
-    public function __construct($product = null) {
-        $this->conn = Connection::getInstance();
+    public function __construct(
+        ProductAbstract $product = null,
+        Connection $conn
+    ) {
+        $this->conn = $conn;
         $this->data = [];
         $this->setProduct($product);
     }

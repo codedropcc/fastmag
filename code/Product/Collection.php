@@ -9,6 +9,9 @@ use Fastmag\QB;
 
 use Fastmag\Product\Factory;
 
+/**
+ * @Injectable(scope="prototype")
+ */
 class Collection {
     public $products = [];
     
@@ -23,9 +26,12 @@ class Collection {
     protected $isCacheValid;
 
     // Do not load every product bro, that's stupid.
-    public function __construct($products = array()) {
-        $this->conn = Connection::getInstance();
-        $this->attributeHelper = AttributeHelper::getInstance();
+    public function __construct(
+        Connection $conn,
+        AttributeHelper $attributeHelper
+    ) {
+        $this->conn = $conn;
+        $this->attributeHelper = $attributeHelper;
         $this->isFilterChanged = false;
         $this->prefix = $this->conn->getPrefix();
         if (empty($products)) {
