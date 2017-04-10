@@ -11,6 +11,11 @@
     "usmanhalalit/pixie": "*",
     "php-di/php-di": "*"
   },
+  "require": {
+    "doctrine/annotations": "*",
+    "usmanhalalit/pixie": "*",
+    "php-di/php-di": "*"
+  },
   "autoload": {
     "psr-4": {"Fastmag\\": "code/"}
   }
