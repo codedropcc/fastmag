@@ -1,5 +1,5 @@
 <?php
-
+// @codeCoverageIgnoreStart
 use function DI\object;
 use function DI\get;
 
@@ -35,3 +35,4 @@ return [
         return new AttributeHelper($conn);
     },
 ];
+// @codeCoverageIgnoreEnd
