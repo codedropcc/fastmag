@@ -25,7 +25,7 @@ return [
                 'host' => DI\env('DATABASE_HOST', 'localhost'),
                 'dbname' => DI\env('DATABASE_NAME','magento'),
                 'username' => DI\env('DATABASE_USERNAME','magento'),
-                'password' => DI\env('DATABASE_PASSWORD','magento'),
+                'password' => DI\env('DATABASE_PASSWORD',''),
                 'prefix' => '',
             ];
         }
