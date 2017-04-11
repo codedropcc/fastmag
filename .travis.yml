@@ -1,5 +1,8 @@
 language: php
 
+services:
+  - mysql
+
 sudo: false
 
 php:
@@ -10,6 +13,8 @@ php:
 before_script:
   - composer require satooshi/php-coveralls:dev-master -n
   - composer install -n
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS magento;'
+  - vendor/bin/phinx migrate
 
 script:
   - sh ./run_tests.sh

@@ -2,6 +2,7 @@
 
 use function DI\object;
 use function DI\get;
+use function DI\env;
 
 use Fastmag\Connection;
 use Fastmag\AttributeHelper;
@@ -21,10 +22,10 @@ return [
         }
         else {
             $config = [
-                'host' => 'localhost',
-                'dbname' => 'magento',
-                'username' => 'magento',
-                'password' => 'magneto',
+                'host' => DI\env('DATABASE_HOST', 'localhost'),
+                'dbname' => DI\env('DATABASE_NAME','magento'),
+                'username' => DI\env('DATABASE_USERNAME','magento'),
+                'password' => DI\env('DATABASE_PASSWORD','magento'),
                 'prefix' => '',
             ];
         }
