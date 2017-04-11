@@ -2,3 +2,4 @@ code/* lib/Fastmag/
 
 #adding all symlinks to .gitignore
 @shell bash symlinks.sh \$PROJECT && echo "Add symlinks in .gitignore"
+@shell bash install_autoload.sh
