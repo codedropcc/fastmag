@@ -82,7 +82,7 @@ class Factory
         return NULL;
     }
 
-    private function _getProductIdBySku($sku) {
+    private static function _getProductIdBySku($sku) {
         $id = QB::table('catalog_product_entity')
             ->select('entity_id')
             ->where('sku', $sku)
