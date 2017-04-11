@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/codedropcc/fastmag.svg?branch=master)](https://travis-ci.org/codedropcc/fastmag)
+[![Coverage Status](https://coveralls.io/repos/github/codedropcc/fastmag/badge.svg)](https://coveralls.io/github/codedropcc/fastmag)
 # What is it?
 This is a library for fast work with magento products. At typical project with Magento 1.9.x, speed was increased in 10 times.
 ### Right now this library under heavy development, so keep in mind it ;)
