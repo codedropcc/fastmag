@@ -25,7 +25,10 @@ class ProductTest extends TestCase {
     protected static $api = null;
     /** @var Fastmag\AttributeHelper $helper */
     protected static $helper = null;
+    /** @var \Fastmag\Fastmag */
     protected static $instance = null;
+    /** @var \Fastmag\Product\Factory */
+    protected static $factory = null;
     protected static $connection = null;
 
     protected $colors = [
@@ -75,10 +78,10 @@ class ProductTest extends TestCase {
         
         // Removing tmp and media folders
         /** @var Fastmag\Product\ProductAbstract $simple */
-        $simple = Factory::create(['type_id' => 'simple']);
+        self::$factory = self::$instance->getModel('Fastmag\Product\Factory');
+        $simple = self::$factory->create(['type_id' => 'simple']);
         self::rmDir($simple->getBaseDir() . DIRECTORY_SEPARATOR . 'media');
         self::rmDir($simple->getBaseDir() . DIRECTORY_SEPARATOR . 'tmp');
-        
         self::$api = self::$instance->getModel('Fastmag\Product\Api');
         self::$helper = self::$instance->getModel('Fastmag\AttributeHelper');
     }
@@ -140,7 +143,9 @@ class ProductTest extends TestCase {
                 'use_config_backorders' => 0
             ],
         ];
-        $product = self::$api->createSimple($data);
+        /** @var \Fastmag\Product\Simple $product */
+        $product = self::$factory->create($data);
+        $product->save();
         $this->assertNotNull($product->getId());
         $this->assertInstanceOf('\Fastmag\Product\Simple', $product);
         $this->assertEquals(self::$helper->getSkuById($product->getId()), 'test-simple');
@@ -193,7 +198,9 @@ class ProductTest extends TestCase {
                 'use_config_backorders' => 0
             ],
         ];
-        $product = self::$api->createSimple($data);
+        /** @var \Fastmag\Product\Simple $product */
+        $product = self::$factory->create($data);
+        $product->save();
         $this->assertEquals($product->getId(), $simple->getId());
         return $product;
     }
@@ -226,7 +233,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetCategoryIds() {
-        $simple = Factory::createBySku('test-simple');
+        $simple = self::$factory->createBySku('test-simple');
         $this->assertEquals($simple->getCategoryIds(), [2]);
     }
 
@@ -234,7 +241,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetWebsiteIds() {
-        $simple = Factory::createBySku('test-simple');
+        $simple = self::$factory->createBySku('test-simple');
         $this->assertEquals($simple->getWebsiteIds(), [1]);
     }
 
@@ -242,7 +249,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetTierPrice() {
-        $simple = Factory::createBySku('test-simple');
+        $simple = self::$factory->createBySku('test-simple');
         $this->assertEquals($simple->getTierPrice(), [
             [
                 'qty' => 2,
@@ -277,7 +284,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetStockData() {
-        $simple = Factory::createBySku('test-simple');
+        $simple = self::$factory->createBySku('test-simple');
         $stockData = $simple->getStockData()[0];
         $this->assertEquals($stockData['qty'], 100.0000);
         $this->assertEquals($stockData['is_in_stock'], 1);
@@ -288,10 +295,10 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testIsProductNew(Simple $simple) {
-        $product = Factory::create($simple->getId());
+        $product = self::$factory->create($simple->getId());
         $this->assertEquals($product->isNew(), false);
         
-        $product = Factory::create(['type_id' => 'simple']);
+        $product = self::$factory->create(['type_id' => 'simple']);
         $this->assertEquals($product->isNew(), true);
     }
 
@@ -299,7 +306,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetImages() {
-        $simple = Factory::createBySku('test-simple');
+        $simple = self::$factory->createBySku('test-simple');
         $image = $simple->getImages()[0]['value'];
         $this->assertEquals($image, '/t/e/test_product_image.png');
     }
@@ -308,7 +315,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testIsSaleable() {
-        $simple = Factory::createBySku('test-simple');
+        $simple = self::$factory->createBySku('test-simple');
         $this->assertEquals($simple->isSaleable(), true);
         $simple->setStatus(2);
         $this->assertEquals($simple->isSaleable(), false);
@@ -358,7 +365,9 @@ class ProductTest extends TestCase {
                 'use_config_backorders' => 0
             ],
         ];
-        $product = self::$api->createSimple($data);
+        /** @var \Fastmag\Product\Simple $product */
+        $product = self::$factory->create($data);
+        $product->save();
         $this->assertNotNull($product->getId());
         $this->assertInstanceOf('\Fastmag\Product\Simple', $product);
         $this->assertEquals(self::$helper->getSkuById($product->getId()), 'test-simple-internet-image');
@@ -376,7 +385,7 @@ class ProductTest extends TestCase {
                 'path' => ['/t/e/test_product_image.png']
             ]
         ]);
-        $simple = Factory::create($simple->getId());
+        $simple = self::$factory->create($simple->getId());
         $this->assertEquals($simple->getImages(), []);
         $this->assertEquals($simple->getImagePath(), false);
         $this->assertEquals($simple->getImageUrl(), false);
@@ -393,7 +402,7 @@ class ProductTest extends TestCase {
                 'label' => ['']
             ]
         ]);
-        $simple = Factory::create($simple->getId());
+        $simple = self::$factory->create($simple->getId());
         $this->assertEquals($simple->getImages(), []);
     }
 
@@ -473,7 +482,11 @@ class ProductTest extends TestCase {
             'flags' => $flags,
             'selections' => $selections,
         ];
-        $product = self::$api->createBundle($data);
+        /** @var \Fastmag\Product\Bundle $product */
+        $product = self::$factory->create($data['bundle']);
+        $product->setData('options', $options);
+        $product->setData('selections', $selections);
+        $product->save();
         $this->assertInstanceOf('\Fastmag\Product\Bundle', $product);
         $this->assertNotNull($product->getId());
         return $product;
@@ -499,7 +512,7 @@ class ProductTest extends TestCase {
      */
     public function testGetRelationsFromProduct(Bundle $bundle) {
         /** @var Bundle $product */
-        $product = Factory::create($bundle->getId());
+        $product = self::$factory->create($bundle->getId());
         $relationIds = $product->getRelatedLinkCollection();
         $selectionIds = ArrayHelper::map(
             function ($item) {
@@ -557,7 +570,9 @@ class ProductTest extends TestCase {
             ],
             'color' => $attributeHelper->getAttributeOptionValue('color', 'black'),
         ];
-        $product = self::$api->createSimple($data);
+        /** @var \Fastmag\Product\Simple $product */
+        $product = self::$factory->create($data);
+        $product->save();
         $this->assertNotNull($product->getId());
         $this->assertInstanceOf('\Fastmag\Product\Simple', $product);
         return $product;
@@ -610,7 +625,9 @@ class ProductTest extends TestCase {
             ],
             'color' => $attributeHelper->getAttributeOptionValue('color', 'white'),
         ];
-        $product = self::$api->createSimple($data);
+        /** @var \Fastmag\Product\Simple $product */
+        $product = self::$factory->create($data);
+        $product->save();
         $this->assertNotNull($product->getId());
         $this->assertInstanceOf('\Fastmag\Product\Simple', $product);
         return $product;
@@ -668,7 +685,9 @@ class ProductTest extends TestCase {
             ];
         }
 
-        $product = self::$api->createConfigurable($configData);
+        /** @var \Fastmag\Product\Configurable $product */
+        $product = self::$factory->create($configData);
+        $product->save();
         
         $this->assertNotNull($product);
         $this->assertInstanceOf('\Fastmag\Product\Configurable', $product);
@@ -680,7 +699,7 @@ class ProductTest extends TestCase {
      * @depends testCreateConfigurableProduct
      */
     public function testCheckThatProductsWasAssignedRightToConfigurable(Configurable $config) {
-        $product = Factory::create($config->getId());
+        $product = self::$factory->create($config->getId());
 
         $this->assertEquals(count($product->getRelationIds()), 1);
     }
@@ -758,7 +777,9 @@ class ProductTest extends TestCase {
                 'use_config_backorders' => 0
             ],
         ];
-        $product = self::$api->createGrouped($data);
+        /** @var \Fastmag\Product\Grouped $product */
+        $product = self::$factory->create($data);
+        $product->save();
         
         $this->assertNotNull($product);
         $this->assertInstanceOf('\Fastmag\Product\Grouped', $product);
@@ -768,28 +789,28 @@ class ProductTest extends TestCase {
     
     public function testGetExceptionWhenCreatingSimpleProductWithoutData() {
         $this->expectException(Exception::class);
-        self::$api->createSimple([]);
+        self::$factory->create([])->save();
     }
     
     public function testGetExceptionWhenCreatingBundleProductWithoutData() {
         $this->expectException(Exception::class);
-        self::$api->createBundle([]);
+        self::$factory->create([])->save();
     }
     public function testGetExceptionWhenCreatingConfigurableProductWithoutData() {
         $this->expectException(Exception::class);
-        self::$api->createConfigurable([]);
+        self::$factory->create([])->save();
     }
     public function testGetExceptionWhenCreatingGroupedProductWithoutData() {
         $this->expectException(Exception::class);
-        self::$api->createGrouped([]);
+        self::$factory->create([])->save();
     }
     public function testGetExceptionWhenCreatingVirtualProductWithoutData() {
         $this->expectException(Exception::class);
-        self::$api->createVirtual([]);
+        self::$factory->create([])->save();
     }
     public function testGetExceptionWhenCreatingDownloadableProductWithoutData() {
         $this->expectException(Exception::class);
-        self::$api->createDownloadable([]);
+        self::$factory->create([])->save();
     }
 
     /**
@@ -839,7 +860,9 @@ class ProductTest extends TestCase {
                 'use_config_backorders' => 0
             ],
         ];
-        $product = self::$api->createDownloadable($data);
+        /** @var \Fastmag\Product\Downloadable $product */
+        $product = self::$factory->create($data);
+        $product->save();
 
         $this->assertNotNull($product);
         $this->assertInstanceOf('\Fastmag\Product\Downloadable', $product);
@@ -894,7 +917,9 @@ class ProductTest extends TestCase {
                 'use_config_backorders' => 0
             ],
         ];
-        $product = self::$api->createVirtual($data);
+        /** @var \Fastmag\Product\Virtual $product */
+        $product = self::$factory->create($data);
+        $product->save();
 
         $this->assertNotNull($product);
         $this->assertInstanceOf('\Fastmag\Product\Virtual', $product);
@@ -907,7 +932,7 @@ class ProductTest extends TestCase {
      * @param Simple $simple
      */
     public function testGetSimpleProduct(Simple $simple) {
-        $product = Factory::create($simple->getId());
+        $product = self::$factory->create($simple->getId());
         
         $this->assertEquals($product->getId(), $simple->getId());
         $this->assertEquals($product->getSku(), $simple->getSku());
@@ -937,12 +962,12 @@ class ProductTest extends TestCase {
 
     public function testGetNonExistingProduct() {
         $this->expectException(Exception::class);
-        $product = Factory::create(999999);
+        $product = self::$factory->create(999999);
     }
     
     public function testCreateNonExistingTypeIdProduct() {
         $this->expectException(Exception::class);
-        $product = Factory::create(['type_id' => 'nonexistingtype']);
+        $product = self::$factory->create(['type_id' => 'nonexistingtype']);
     }
 
     /**
@@ -950,11 +975,11 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetSimpleProductBySku(Simple $simple) {
-        $product = Factory::createBySku($simple->getSku());
+        $product = self::$factory->createBySku($simple->getSku());
         $this->assertEquals($product->getSku(), $simple->getSku());
         $this->assertEquals($product->getId(), $simple->getId());
         
-        $product = Factory::create(['sku' => $simple->getSku()]);
+        $product = self::$factory->create(['sku' => $simple->getSku()]);
         $this->assertEquals($product->getSku(), $simple->getSku());
         $this->assertEquals($product->getId(), $simple->getId());
     }
@@ -964,7 +989,7 @@ class ProductTest extends TestCase {
      * @depends testCreateSimpleProduct
      */
     public function testGetSimpleProductWithoutData(Simple $simple) {
-        $product = Factory::create(['id' => $simple->getId()]);
+        $product = self::$factory->create(['id' => $simple->getId()]);
         $this->assertEquals($product->getId(), $simple->getId());
         $this->assertEquals($product->getSku(), $simple->getSku());
     }
@@ -973,14 +998,14 @@ class ProductTest extends TestCase {
         $data = [
             'type_id' => 'simple',
         ];
-        $product = Factory::create($data);
+        $product = self::$factory->create($data);
         $this->assertEquals($product->getData(), ['type_id' => 'simple']);
         $this->assertInstanceOf('\Fastmag\Product\Simple', $product);
     }
 
     public function testCallTheUndefinedFunctionOfProduct() {
         $this->expectException(Exception::class);
-        $product = Factory::create(['type_id' => 'simple']);
+        $product = self::$factory->create(['type_id' => 'simple']);
         $product->callTheUndefined();
     }
 
@@ -990,7 +1015,7 @@ class ProductTest extends TestCase {
      * @return Bundle
      */
     public function testGetBundleProduct(Bundle $bundle) {
-        $product = Factory::create($bundle->getId());
+        $product = self::$factory->create($bundle->getId());
         $this->assertEquals($product->getId(), $bundle->getId());
         $this->assertEquals($product->getSku(), $bundle->getSku());
         $this->assertInstanceOf('\Fastmag\Product\Bundle', $product);
@@ -1001,7 +1026,7 @@ class ProductTest extends TestCase {
      * @param Configurable $configurable
      */
     public function testGetConfigurableProduct(Configurable $configurable) {
-        $product = Factory::create($configurable->getId());
+        $product = self::$factory->create($configurable->getId());
         $this->assertEquals($product->getId(), $configurable->getId());
         $this->assertEquals($product->getSku(), $configurable->getSku());
         $this->assertInstanceOf('\Fastmag\Product\Configurable', $product);
@@ -1009,7 +1034,7 @@ class ProductTest extends TestCase {
 
     public function testThrowExceptionBecauseNoDataForCreation() {
         $this->expectException(Exception::class);
-        $product = Factory::create(['color' => 'black']);
+        $product = self::$factory->create(['color' => 'black']);
     }
 
     /**
@@ -1173,7 +1198,7 @@ class ProductTest extends TestCase {
     public function testAddCategoryToRelation(Simple $simple) {
         $simple->setCategoryIds([2, 3, 4]);
         $simple->save();
-        $simple = Factory::create($simple->getId());
+        $simple = self::$factory->create($simple->getId());
         $this->assertEquals($simple->getCategoryIds(), [2, 3, 4]);
         return $simple;
     }
@@ -1186,7 +1211,7 @@ class ProductTest extends TestCase {
     public function testDeleteAllCategoryRelationFromSimple(Simple $simple) {
         $simple->setCategoryIds([]);
         $simple->save();
-        $simple = Factory::create($simple->getId());
+        $simple = self::$factory->create($simple->getId());
         $this->assertEquals($simple->getCategoryIds(), []);
     }
 }
