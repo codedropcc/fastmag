@@ -22,5 +22,5 @@ script:
 after_script:
   - php vendor/bin/coveralls -v
 
-notification:
+notifications:
   webhooks: $CHAT_URL
