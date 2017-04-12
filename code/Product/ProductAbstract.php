@@ -201,11 +201,12 @@ abstract class ProductAbstract
             
             /** Let the nested class the realize custom options */
             $this->customOptionsSave();
-            
         }
         catch (Exception $e) {
-            var_dump("Error: " . $e->getMessage());
+            return $e->getMessage();
         }
+
+        return $this;
     }
     
     abstract protected function customOptionsSave();

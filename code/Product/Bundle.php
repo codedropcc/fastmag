@@ -18,7 +18,7 @@ class Bundle extends ProductAbstract
 
     protected function customOptionsSave() {
         //here bundle->save stuff started.
-        if ($this->data['options'] && $this->data['selections']) {
+        if (isset($this->data['options']) && isset($this->data['selections'])) {
             $this->_saveBundleOptions();
         }
         else {
