@@ -1282,4 +1282,46 @@ class ProductTest extends TestCase {
         $this->assertEquals(self::$helper->getSkuById($product->getId()), 'test-simple');
         return $product;
     }
+
+    public function testBundleCreationWithoutCustomOptions()
+    {
+        $data = [
+            'type_id' => 'bundle',
+            'website_ids' => [1],
+            'attribute_set_id' => 1,
+            'entity_type_id' => 4,
+            'sku_type' => 1,
+            'name' => 'Test Bundle',
+            'sku' => 'test-bundle',
+            'price' => 2.0000,
+            'weight_type' => 0,
+            'shipment_type' => 0,
+            'url_path' => 'test-bundle.html',
+            'url_key' => 'test-bundle',
+            'status' => 1,
+            'visibility' => 4,
+            'price_type' => 1,
+            'price_view' => 0,
+            'tax_class_id' => 7,
+            'description' => 'Test Bundle Description',
+            'short_description' => 'Test Bundle Short Description',
+            'meta_title' => 'Test Bundle Meta Title',
+            'meta_description' => 'Test Bundle Meta Description',
+            'meta_keyword' => 'Test Bundle Meta Keyword',
+            'category_ids' => [2],
+            'weight' => 2.0000,
+            'stock_data' => [
+                'stock_id' => 1,
+                'use_config_manage_stock' => 0,
+                'manage_stock' => 0,
+                'is_in_stock' => 1,
+                'qty' => 0,
+            ],
+            'images' => [
+                __DIR__ . '/image/test_product_image.png' => ['image', 'small_image']
+            ],
+        ];
+        /** @var \Fastmag\Product\Bundle $product */
+        $this->assertEquals(self::$factory->create($data)->save(), 'No have bundle options and selections data.');
+    }
 }
