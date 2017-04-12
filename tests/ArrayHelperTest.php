@@ -38,7 +38,7 @@ class ArrayHelperTest extends TestCase {
     }
 
     public function testShortest() {
-        $array1 = [1, 2, 3, 4];
+        $array1 = [1, 2, 3, 4, 5, 6, 7];
         $array2 = [1, 2, 3, 4, 5];
         $array3 = [1, 2, 3, 4, 5, null];
         $array4 = [1, 2, 3, 4];
