@@ -6,6 +6,7 @@ use Fastmag\AttributeHelper;
 use Fastmag\ArrayHelper;
 use Fastmag\Connection;
 use Fastmag\Exception;
+use Fastmag\Entity;
 
 use Fastmag\Product\Attribute\Factory as AttributeFactory;
 
@@ -13,10 +14,9 @@ use Fastmag\QB;
 /**
  * @Injectable(scope="prototype")
  */
-abstract class ProductAbstract
+abstract class ProductAbstract extends Entity
 {
     public $id;
-    public $data;
     /** @var AttributeHelper $attributeHelper */
     protected $attributeHelper;
     /** @var Connection $conn */
@@ -74,32 +74,6 @@ abstract class ProductAbstract
         $this->id = $id;
         $this->_isNew = false;
         return $this;
-    }
-
-    public function __call($name, $args) {
-        if (preg_match('/^get(.*)$/', $name, $matches)) {
-            $attribute = $matches[1];
-            $attribute_name = $this->attributeHelper->translateToAttributeName($attribute);
-            return $this->getData($attribute_name);
-        }
-        else if (preg_match('/^set(.*)$/', $name, $matches)) {
-            $attribute = $matches[1];
-            $attribute_name = $this->attributeHelper->translateToAttributeName($attribute);
-            return $this->setData($attribute_name, $args[0]);
-        }
-        else if (preg_match('/^unset(.*)$/', $name, $matches)) {
-            $attribute = $matches[1];
-            $attribute_name = $this->attributeHelper->translateToAttributeName($attribute);
-            return $this->unsetData($attribute_name);
-        }
-        else if (preg_match('/remove(.*)$/', $name, $matches)) {
-            $attribute = $matches[1];
-            $attribute_name = $this->attributeHelper->translateToAttributeName($attribute);
-            return $this->removeData($attribute_name);
-        }
-        else {
-            throw new Exception("UNDEFINED FUNCTION " . $name);
-        }
     }
 
     public function getData($attribute = null) {

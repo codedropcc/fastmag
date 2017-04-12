@@ -52,19 +52,6 @@ class AttributeHelper {
         return NULL;
     }
 
-    public function translateToAttributeName($attribute) {
-        $attribute_name = '';
-        $i = 0;
-        foreach (str_split($attribute) as $char) {
-            if (ctype_upper($char) && $i != 0) {
-                $attribute_name .= '_';
-            }
-            $attribute_name .= strtolower($char);
-            $i++;
-        }
-        return $attribute_name;
-    }
-
     public function getAttributeIdByCode($attribute_code) {
         $attribute = QB::table('eav_attribute')
             ->select('attribute_id')
