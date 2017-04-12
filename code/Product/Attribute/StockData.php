@@ -10,15 +10,17 @@ use Fastmag\AttributeHelper;
 class StockData implements AttributeAbstract {
     protected $attributeHelper;
 
+    // @codeCoverageIgnoreStart
     public function __construct(
         AttributeHelper $attributeHelper
     ) {
         $this->attributeHelper = $attributeHelper;
     }
+    // @codeCoverageIgnoreEnd
 
     public function save(ProductAbstract $product) {
         if (ArrayHelper::is_multi($product->getData($this->getAttributeCode()))) {
-            foreach ($stock_data as $key => $value) {
+            foreach ($product->getData($this->getAttributeCode()) as $key => $value) {
                 $product->setData($this->getAttributeCode(), $value);
                 $this->save($product);
             }
