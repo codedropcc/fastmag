@@ -2,8 +2,12 @@
 
 namespace Fastmag\Product;
 
-use Fastmag\Product\Simple;
+use Fastmag\Product\ProductAbstract;
 
-class Virtual extends Simple {
-
+class Virtual extends ProductAbstract
+{
+    protected function customOptionsSave()
+    {
+        // Nothing to do for virual, brah!
+    }
 }
