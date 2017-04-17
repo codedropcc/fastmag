@@ -137,9 +137,10 @@ abstract class Entity implements \ArrayAccess {
             
         }
         catch (Exception $e) {
-            var_dump("Error: " . $e->getMessage());
+            return $e->getMessage();
         }
 
+        return $this;
     }
 
     abstract protected function customOptionsSave();

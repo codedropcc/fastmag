@@ -1260,7 +1260,7 @@ class ProductTest extends TestCase {
             'entity_type_id' => 4,
             'sku_type' => 1,
             'name' => 'Test Bundle',
-            'sku' => 'test-bundle',
+            'sku' => 'test-bundle-kek',
             'price' => 2.0000,
             'weight_type' => 0,
             'shipment_type' => 0,
