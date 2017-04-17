@@ -24,6 +24,7 @@ class Factory
      */
     public static function create($data) {
         $typeId = null;
+        $id = null;
         $setData = false;
         // first of all, let's check if it's int or string, probably it's id
         if (is_int($data) || is_string($data)) {
@@ -31,11 +32,12 @@ class Factory
         }
         // if not, let's check, if it's array and has id | sku
         else if (is_array($data)) {
-            if (isset($data['id'])) {
-                $typeId = self::_getProductTypeId($data['id']);
+            if ($id = self::getId($data)) {
+                $typeId = self::_getProductTypeId($id);
             }
             else if (isset($data['sku'])) {
-                $typeId = self::_getProductTypeId(self::_getProductIdBySku($data['sku']));
+                $id = self::_getProductIdBySku($data['sku']);
+                $typeId = self::_getProductTypeId($id);
             }
             // If nothing of it was found, let's create empty product
             if (($typeId === null || $typeId === false) && isset($data['type_id'])) {
@@ -59,12 +61,24 @@ class Factory
         }
         $typeId = ucfirst($typeId);
         $product = Fastmag\Fastmag::getInstance()->getModel('Fastmag\Product\\' . $typeId);
+
+        if ($id)
+            $product->load($id);
+
         if ($setData)
             $product->setData($data);
         else
             $product->load($data);
 
         return $product;
+    }
+
+    protected static function getId($data) {
+        if (isset($data['entity_id']))
+            return $data['entity_id'];
+        else if (isset($data['id']))
+            return $data['id'];
+        return false;
     }
 
     public static function createBySku($sku) {
