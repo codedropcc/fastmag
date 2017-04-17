@@ -25,7 +25,7 @@ class StockData implements AttributeAbstract {
         }
         else {
             $data = $product->getData($this->getAttributeCode());
-            $data['product_id'] = $product->id;
+            $data['product_id'] = $product->getId();
             
             $alreadyExistingStocks = $this->get($product);
             foreach ($alreadyExistingStocks as $stock) {
@@ -51,7 +51,7 @@ class StockData implements AttributeAbstract {
             return (array)$item;
         }, QB::table('cataloginventory_stock_item')
             ->select('*')
-            ->findAll('product_id', $product->id)
+            ->findAll('product_id', $product->getId())
         );
         return (array)$data;
     }

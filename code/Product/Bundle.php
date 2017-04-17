@@ -17,6 +17,7 @@ class Bundle extends ProductAbstract
     const DEFAULT_BUNDLE_OPTION_VALUE_STORE_ID_ADMIN = 0;
 
     protected function customOptionsSave() {
+        parent::customOptionsSave();
         //here bundle->save stuff started.
         if ($this->data['options'] && $this->data['selections']) {
             $this->_saveBundleOptions();
@@ -40,7 +41,7 @@ class Bundle extends ProductAbstract
                 if (in_array($k, $optionKeys))
                     $bundleOptionData[$k] = $v;
             }
-            $bundleOptionData['parent_id'] = $this->id;
+            $bundleOptionData['parent_id'] = $this->getId();
             
             $optionIds[$key] = QB::table('catalog_product_bundle_option')
                 ->insert($bundleOptionData);
@@ -69,7 +70,7 @@ class Bundle extends ProductAbstract
 
             ArrayHelper::walk(function ($selection) use ($optionId) {
                 $selection['option_id'] = $optionId;
-                $selection['parent_product_id'] = $this->id;
+                $selection['parent_product_id'] = $this->getId();
                 QB::table('catalog_product_bundle_selection')
                     ->insert($selection);
             }, $selections);
@@ -82,7 +83,7 @@ class Bundle extends ProductAbstract
             return Factory::create($item->product_id);
         }, QB::table('catalog_product_bundle_selection')
             ->select('product_id')
-            ->where('parent_product_id', $this->id)
+            ->where('parent_product_id', $this->getId())
             ->get()
         );
     }
@@ -92,7 +93,7 @@ class Bundle extends ProductAbstract
             return (array)$item;
         }, QB::table('catalog_product_bundle_selection')
             ->select('*')
-            ->where('parent_product_id', $this->id)
+            ->where('parent_product_id', $this->getId())
             ->get()
         );
     }

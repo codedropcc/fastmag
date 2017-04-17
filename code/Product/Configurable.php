@@ -13,6 +13,7 @@ use Fastmag\Product\ProductAbstract;
 class Configurable extends ProductAbstract
 {
     protected function customOptionsSave() {
+        parent::customOptionsSave();
         // Nothing to do for configurable
         if (isset($this->data['configurable_attributes_data'])) {
             $this->saveConfigurableAttributesData($this->data['configurable_attributes_data']);
@@ -25,7 +26,7 @@ class Configurable extends ProductAbstract
     public function getRelationIds() {
         $items = QB::table('catalog_product_super_link')
             ->select('product_id')
-            ->where('parent_id', $this->id)
+            ->where('parent_id', $this->getId())
             ->get();
         return ArrayHelper::map(function($item){
             return $item->product_id;
@@ -35,7 +36,7 @@ class Configurable extends ProductAbstract
     protected function getProductSuperAttributeId($attribute_id) {
         $item = QB::table('catalog_product_super_attribute')
             ->select('product_super_attribute_id')
-            ->where('product_id', $this->id)
+            ->where('product_id', $this->getId())
             ->where('attribute_id', $attribute_id)
             ->first();
         if (!is_null($item)) {
@@ -51,7 +52,7 @@ class Configurable extends ProductAbstract
             if(is_null($product_super_attribute_id)) {
                 $product_super_attribute_id = QB::table('catalog_product_super_attribute')
                     ->insert([
-                        'product_id' => $this->id,
+                        'product_id' => $this->getId(),
                         'attribute_id' => $attribute_id,
                         'position' => $i
                     ]);
@@ -79,11 +80,11 @@ class Configurable extends ProductAbstract
 
         foreach ($delete as $id) {
             QB::table('catalog_product_super_link')
-                ->where('parent_id', $this->id)
+                ->where('parent_id', $this->getId())
                 ->where('product_id', $id)
                 ->delete();
             QB::table('catalog_product_relation')
-                ->where('parent_id', $this->id)
+                ->where('parent_id', $this->getId())
                 ->where('child_id', $id)
                 ->delete();
         }
@@ -91,12 +92,12 @@ class Configurable extends ProductAbstract
         foreach ($insert as $id) {
             QB::table('catalog_product_super_link')
                 ->insert([
-                    'parent_id' => $this->id,
+                    'parent_id' => $this->getId(),
                     'product_id' => $id,
                 ]);
             QB::table('catalog_product_relation')
                 ->insert([
-                    'parent_id' => $this->id,
+                    'parent_id' => $this->getId(),
                     'child_id' => $id,
                 ]);
         }

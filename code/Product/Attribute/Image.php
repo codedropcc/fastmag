@@ -94,7 +94,7 @@ class Image implements AttributeAbstract {
                  * Before already saving values in media_gallery, we should check what exists there
                  */
                 $data = QB::table('catalog_product_entity_media_gallery')
-                    ->where('entity_id', $product->id)
+                    ->where('entity_id', $product->getId())
                     ->where('attribute_id', $attributeIds['media_gallery'])
                     ->where('value', $image_path)
                     ->first();
@@ -104,7 +104,7 @@ class Image implements AttributeAbstract {
                     $gallery_value_id = QB::table('catalog_product_entity_media_gallery')
                         ->insert([
                             'attribute_id' => $attributeIds['media_gallery'],
-                            'entity_id' => $product->id,
+                            'entity_id' => $product->getId(),
                             'value' => $image_path
                         ]);
                     
@@ -122,7 +122,7 @@ class Image implements AttributeAbstract {
                         ]);
                 }
                 foreach ($imageInfo as $code) {
-                    $this->attributeHelper->setAttribute($product->id, $code, $image_path);
+                    $this->attributeHelper->setAttribute($product->getId(), $code, $image_path);
                 }
             }
         }
@@ -149,7 +149,7 @@ class Image implements AttributeAbstract {
                 'g.value_id'
             )
             ->where('g.attribute_id', $attr)
-            ->where('g.entity_id', $product->id)
+            ->where('g.entity_id', $product->getId())
             ->get()
         );
     }

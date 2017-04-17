@@ -11,6 +11,7 @@ use Fastmag\Product\ProductAbstract;
  */
 class Simple extends ProductAbstract {
     protected function customOptionsSave() {
+        parent::customOptionsSave();
         // Nothing to do for simple, brah!
     }
 }
