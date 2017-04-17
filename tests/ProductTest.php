@@ -373,39 +373,7 @@ class ProductTest extends TestCase {
         $this->assertEquals(self::$helper->getSkuById($product->getId()), 'test-simple-internet-image');
         return $product;
     }
-
-    /**
-     * @param Simple $simple
-     * @afterClass
-     * @depends testCreateSimpleProduct
-     */
-    public function testRemoveAllImagesByPath(Simple $simple) {
-        $simple->removeImages([
-            [
-                'path' => ['/t/e/test_product_image.png']
-            ]
-        ]);
-        $simple = self::$factory->create($simple->getId());
-        $this->assertEquals($simple->getImages(), []);
-        $this->assertEquals($simple->getImagePath(), false);
-        $this->assertEquals($simple->getImageUrl(), false);
-    }
     
-    /**
-     * @param Simple $simple
-     * @afterClass
-     * @depends testCreateSimpleProductWithImageOverInternet
-     */
-    public function testRemoveAllImagesByLabel(Simple $simple) {
-        $simple->removeImages([
-            [
-                'label' => ['']
-            ]
-        ]);
-        $simple = self::$factory->create($simple->getId());
-        $this->assertEquals($simple->getImages(), []);
-    }
-
     /**
      * @param Simple $simple
      * @depends testCreateSimpleProduct
@@ -944,7 +912,7 @@ class ProductTest extends TestCase {
      */
     public function testGetSimpleProductByAttribute(Simple $simple) {
         $product = Fastmag\Fastmag::getInstance()->getModel('Fastmag\Product\Simple');
-        $product->loadByAttribute('color', self::$helper->getAttributeOptionValue('color', 'black'));
+        $product->load(self::$helper->getAttributeOptionValue('color', 'black'), 'color');
 
         $this->assertEquals($product->getId(), $simple->getId());
         $this->assertEquals($product->getSku(), $simple->getSku());
