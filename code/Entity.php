@@ -32,7 +32,7 @@ abstract class Entity implements \ArrayAccess {
             $key = $matches[1];
             return $this->getData($this->translateToKey($key));
         }
-        else if (preg_match('/set(.*)$/', $name, $matches)) {
+        else if (preg_match('/^set(.*)$/', $name, $matches)) {
             $key = $matches[1];
             return $this->setData($this->translateToKey($key), $args[0]);
         }
@@ -83,9 +83,7 @@ abstract class Entity implements \ArrayAccess {
             ->select($key)
             ->where($this->primary_key, $this->getId())
             ->first();
-        if (!is_null($data))
-            return $data->{$key};
-        return null;
+        return $data->{$key};
     }
 
     public function getEntityData() {
@@ -106,9 +104,7 @@ abstract class Entity implements \ArrayAccess {
         if (!is_null($id)) {
             return $id->{$this->primary_key};
         }
-        else {
-            throw new Exception("Value {$column} not found in table {$this->table()}");
-        }
+        return null;
     }
 
     public function save() {
@@ -163,10 +159,7 @@ abstract class Entity implements \ArrayAccess {
     }
 
     public function offsetSet($offset, $value) {
-        if (is_null($offset)) {
-            $this->data[] = $value;
-        }
-        else {
+        if (!is_null($offset)) {
             $this->data[$offset] = $value;
         }
     }

@@ -36,8 +36,8 @@ abstract class FlatEntity extends Entity {
 
     public function unsetData($key) {
         if (is_array($key)) {
-            foreach ($key as $internal_key => $value) {
-                $this->unsetData($internal_key);
+            foreach ($key as $_ => $value) {
+                $this->unsetData($value);
             }
         }
         else {
@@ -54,7 +54,5 @@ abstract class FlatEntity extends Entity {
         return $this;
     }
 
-    protected function customOptionsSave() {
-        // Nothing to do
-    }
+    protected function customOptionsSave() {}
 }

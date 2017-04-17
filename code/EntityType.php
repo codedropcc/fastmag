@@ -13,7 +13,5 @@ class EntityType extends FlatEntity {
         return 'eav_entity_type';
     }
 
-    public function customOptionsSave() {
-
-    }
+    public function customOptionsSave() {}
 }
