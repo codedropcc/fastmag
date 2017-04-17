@@ -21,3 +21,13 @@ script:
 
 after_script:
   - php vendor/bin/coveralls -v
+
+notifications:
+  webhooks:
+    urls:
+      secure: FoKqCxrmYqWiLKKAR+smMuIhELc+RyT9zH5K18mbzBFQq9VW5zQpr/Y/BnYj8kDSNDWhFqKZsyou18iSUpiZT7TrOUFJHuXuGwZb6+gbfoHx80v5yK8TQrG8IesVn3XB3YfNbwp85iQRw2+oeauQACEP9QjNG4J5Xx4yW9Imu+KgqGehM2ZFUm3yx/CtnYdwMiN2hlXQJ9bWYFFktA9WWNgONh7Ib+2YQD17K2lQvcnR+i/mea6mpSNciMfeqkVs5l7d1Gfxe5FK6c2vjJmWNYIW08nLhfKI0DH8/jCFzAXWuSWQLTmlhZqNiHSr+nf9hiI7P/PYrc+RVhgKmnroKDXyCOlcvquoJCcn6W/X6Vqq29KzNRb2jNTsZykWaappGwM7vW9wagP/WJ0hnmHcBv1hlarXc2jsU9WL7W2puXNBnjSYAGAvLKaNHE2kkOLdqiSbxhjNg93D3K25XlLsyhdOMZY7wJwmht2Yh6bu4EXS0JAkt6K3CNQZd9In4Nw/sKGDdfDS8zrGrQJM2zYP0CX7ciHZMj5nkCX5lKhB7lWIVIp9SxAuCK+B7S9KbyUqQmeAmxS4Rv7uDgTRgUseuoQDy59b0Fw/QgrpUwKsPF+LrwLX1VHPZKi5Q5KGQnu8kDUAuULb6XfR8SxGqEZmFASlj0I2Iw39Dh69mvgfxhI= 
+  on_success: always
+  on_failure: always
+  on_start: change
+  on_cancel: always
+  on_error: always

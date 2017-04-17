@@ -1182,4 +1182,114 @@ class ProductTest extends TestCase {
         $simple = self::$factory->create($simple->getId());
         $this->assertEquals($simple->getCategoryIds(), []);
     }
+
+    /**
+     * @return Simple
+     */
+    public function testProductWithMultiStock() {
+        $data = [
+            'type_id' => 'simple',
+            'website_ids' => [1],
+            'category_ids' => [2],
+            'attribute_set_id' => 1,
+            'store_id' => 0,
+            'created_at' => strtotime('now'),
+            'updated_at' => strtotime('now'),
+            'name' => 'Test Simple',
+            'description' => 'Test Simple Description',
+            'short_description' => 'Test Simple Short Description',
+            'meta_title' => 'Test Simple Meta Title',
+            'meta_description' => 'Test Simple Meta Description',
+            'meta_keyword' => 'Test Simple Meta Keyword',
+            'url_path' => 'test-simple.html',
+            'url_key' => 'test-simple',
+            'sku' => 'test-simple',
+            'images' => [
+                __DIR__ . '/image/test_product_image.png' => ['image', 'small_image', 'thumbnail']
+            ],
+            'tier_price' => [
+                '0.7500' => 2,
+                '0.5000' => 5,
+                '0.2500' => 10
+            ],
+            'price' => 1.0000,
+            'status' => 1,
+            'visibility' => 4,
+            'weight' => 1.0000,
+            'entity_type_id' => 4,
+            'tax_class_id' => 7,
+            'qty' => 100,
+            'stock_data' => [
+                [
+                    'stock_id' => 1,
+                    'use_config_manage_stock' => 0,
+                    'manage_stock' => 1,
+                    'min_sale_qty' => 1,
+                    'is_in_stock' => 1,
+                    'qty' => 100,
+                    'backorders' => 1,
+                    'use_config_backorders' => 0
+                ],
+                [
+                    'stock_id' => 2,
+                    'use_config_manage_stock' => 0,
+                    'manage_stock' => 1,
+                    'min_sale_qty' => 1,
+                    'is_in_stock' => 1,
+                    'qty' => 100,
+                    'backorders' => 1,
+                    'use_config_backorders' => 0
+                ]
+            ],
+        ];
+        /** @var \Fastmag\Product\Simple $product */
+        $product = self::$factory->create($data);
+        $product->save();
+        $this->assertNotNull($product->getId());
+        $this->assertInstanceOf('\Fastmag\Product\Simple', $product);
+        $this->assertEquals(self::$helper->getSkuById($product->getId()), 'test-simple');
+        return $product;
+    }
+
+    public function testBundleCreationWithoutCustomOptions()
+    {
+        $data = [
+            'type_id' => 'bundle',
+            'website_ids' => [1],
+            'attribute_set_id' => 1,
+            'entity_type_id' => 4,
+            'sku_type' => 1,
+            'name' => 'Test Bundle',
+            'sku' => 'test-bundle',
+            'price' => 2.0000,
+            'weight_type' => 0,
+            'shipment_type' => 0,
+            'url_path' => 'test-bundle.html',
+            'url_key' => 'test-bundle',
+            'status' => 1,
+            'visibility' => 4,
+            'price_type' => 1,
+            'price_view' => 0,
+            'tax_class_id' => 7,
+            'description' => 'Test Bundle Description',
+            'short_description' => 'Test Bundle Short Description',
+            'meta_title' => 'Test Bundle Meta Title',
+            'meta_description' => 'Test Bundle Meta Description',
+            'meta_keyword' => 'Test Bundle Meta Keyword',
+            'category_ids' => [2],
+            'weight' => 2.0000,
+            'stock_data' => [
+                'stock_id' => 1,
+                'use_config_manage_stock' => 0,
+                'manage_stock' => 0,
+                'is_in_stock' => 1,
+                'qty' => 0,
+            ],
+            'images' => [
+                __DIR__ . '/image/test_product_image.png' => ['image', 'small_image']
+            ],
+        ];
+        /** @var \Fastmag\Product\Bundle $product */
+        $this->assertEquals(self::$factory->create($data)->save(), 'No have bundle options and selections data.');
+    }
 }
