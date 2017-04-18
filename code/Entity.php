@@ -12,18 +12,12 @@ abstract class Entity implements \ArrayAccess {
     protected $data = [];
     protected $columns;
     protected $primary_key = null;
-    protected $entity_type;
     protected $is_new = true;
 
-    public function __construct($entity_type_code = null) {
+    public function __construct() {
         $this->columns = $this->getColumns();
         if (is_null($this->primary_key)) {
             throw new Exception("Table {$this->table()} has no primary key!");
-        }
-        if (!is_null($entity_type_code)) {
-            $this->entity_type = Fastmag::getInstance()->getModel(
-                'Fastmag\EntityType'
-            )->load($entity_type_code, 'entity_type_code');
         }
     }
 

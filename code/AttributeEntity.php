@@ -5,11 +5,23 @@ namespace Fastmag;
 use Fastmag\FlatEntity;
 use Fastmag\QB;
 use Fastmag\Exception;
+use Fastmag\Fastmag;
 
 /**
  * @Injectable(scope="prototype")
  */
 abstract class AttributeEntity extends FlatEntity {
+    protected $entity_type = null;
+
+    public function __construct($entity_type_code) {
+        parent::__construct();
+        if (!is_null($entity_type_code)) {
+            $this->entity_type = Fastmag::getInstance()->getModel(
+                'Fastmag\EntityType'
+            )->load($entity_type_code, 'entity_type_code');
+        }
+    }
+
     public function getData($key = null) {
         if (is_null($key)) {
             return $this->data;
