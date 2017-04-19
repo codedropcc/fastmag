@@ -15,13 +15,13 @@ class Website implements AttributeAbstract {
 
         if (empty($data)) {
             QB::table('catalog_product_website')
-                ->where('product_id', $product->id)
+                ->where('product_id', $product->getId())
                 ->delete();
         }
         else {
             QB::table('catalog_product_website')
                 ->whereNotIn('website_id', $data)
-                ->where('product_id', $product->id)
+                ->where('product_id', $product->getId())
                 ->delete();
 
             $current_data = ArrayHelper::map(function ($item) {
@@ -29,7 +29,7 @@ class Website implements AttributeAbstract {
                 return $item->{$column};
             }, QB::table('catalog_product_website')
                 ->select('website_id')
-                ->where('product_id', $product->id)
+                ->where('product_id', $product->getId())
                 ->get()
             );
             $data = array_diff($data, $current_data);
@@ -39,7 +39,7 @@ class Website implements AttributeAbstract {
                     ->insert(ArrayHelper::map(function ($item) use ($product) {
                         return [
                             'website_id' => $item,
-                            'product_id' => $product->id
+                            'product_id' => $product->getId()
                         ];
                     }, $data));
             }
@@ -54,7 +54,7 @@ class Website implements AttributeAbstract {
             },
             QB::table('catalog_product_website')
                 ->select('website_id')
-                ->where('product_id', $product->id)
+                ->where('product_id', $product->getId())
                 ->get()
         );
     }

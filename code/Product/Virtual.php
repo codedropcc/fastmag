@@ -8,6 +8,7 @@ class Virtual extends ProductAbstract
 {
     protected function customOptionsSave()
     {
+        parent::customOptionsSave();
         // Nothing to do for virual, brah!
     }
 }

@@ -45,7 +45,7 @@ class TierPrice implements AttributeAbstract {
             'qty' => 'price_qty',
         ];
         QB::table('catalog_product_entity_tier_price')
-            ->where('entity_id', $product->id)
+            ->where('entity_id', $product->getId())
             ->delete();
         if (!empty($tier_price)) {
             $website_ids = $product->getData('website_ids');
@@ -54,7 +54,7 @@ class TierPrice implements AttributeAbstract {
                 foreach ($website_ids as $website_id) {
                     foreach ($tier_price as $tp) {
                         $datas[] = [
-                            'entity_id' => $product->id,
+                            'entity_id' => $product->getId(),
                             'value' => $tp[$mappedFields['value']],
                             'qty' => $tp[$mappedFields['qty']],
                             'website_id' => $website_id,
@@ -77,7 +77,7 @@ class TierPrice implements AttributeAbstract {
             },
             QB::table('catalog_product_entity_tier_price')
                 ->select(['qty', 'value'])
-                ->where('entity_id', $product->id)
+                ->where('entity_id', $product->getId())
                 ->get()
         );
     }

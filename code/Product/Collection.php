@@ -104,7 +104,7 @@ class Collection {
         
         if (count($this->products) && !$this->isFilterChanged) {
             $ids = ArrayHelper::map(function ($item) {
-                return $item->id;
+                return $item->getId();
             }, $this->products);
             $query->whereIn('c0.entity_id', $ids);
         }
