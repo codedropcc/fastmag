@@ -102,35 +102,39 @@ abstract class Entity implements \ArrayAccess {
     }
 
     public function save() {
-        try {
-            $entityData = $this->getEntityData();
-            if ($this->getId() === NULL) {
-                // Insert new product
-                $this->is_new = true;
-                $data_to_insert = $entityData;
-                $data_to_insert['created_at'] = $data_to_insert['updated_at'] = date('Y-m-d H:i:s');
-                $this[$this->primary_key] = QB::table($this->table())->insert($data_to_insert);
+        $returnData = null;
+        QB::transaction(function ($qb) use (&$returnData) {
+            try {
+                $entityData = $this->getEntityData();
+                if ($this->getId() === NULL) {
+                    // Insert new product
+                    $this->is_new = true;
+                    $data_to_insert = $entityData;
+                    $data_to_insert['created_at'] = $data_to_insert['updated_at'] = date('Y-m-d H:i:s');
+                    $this[$this->primary_key] = QB::table($this->table())->insert($data_to_insert);
+                }
+                else {
+                    $this->is_new = false;
+                    $data_to_update = $entityData;
+                    unset($data_to_update[$this->primary_key]);
+                    unset($data_to_update['created_at']);
+                    $data_to_update['updated_at'] = date('Y-m-d H:i:s');
+                    QB::table($this->table())
+                        ->where($this->primary_key, $this->getId())
+                        ->update($data_to_update);
+                }
+                
+                /** Let the nested class the realize custom options */
+                $this->customOptionsSave();
+                $returnData = $this;
+                $qb->commit();
             }
-            else {
-                $this->is_new = false;
-                $data_to_update = $entityData;
-                unset($data_to_update[$this->primary_key]);
-                unset($data_to_update['created_at']);
-                $data_to_update['updated_at'] = date('Y-m-d H:i:s');
-                QB::table($this->table())
-                    ->where($this->primary_key, $this->getId())
-                    ->update($data_to_update);
+            catch (Exception $e) {
+                $returnData = $e->getMessage();
+                $qb->rollback();
             }
-            
-            /** Let the nested class the realize custom options */
-            $this->customOptionsSave();
-            
-        }
-        catch (Exception $e) {
-            return $e->getMessage();
-        }
-
-        return $this;
+        });
+        return $returnData;
     }
 
     abstract protected function customOptionsSave();
